@@ -1,13 +1,23 @@
-from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
+"""BioBERT NER wrapper using HuggingFace Hub."""
+
 from typing import List, Tuple
+import os
+
+from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 
 
 class BioBertNER:
     """Wrapper around a BioBERT model for NER tagging."""
 
     def __init__(self, model_name: str = "d4data/biomedical-ner-all"):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForTokenClassification.from_pretrained(model_name)
+        """Load the model using an optional HuggingFace token."""
+        hf_token = os.getenv("HF_TOKEN")
+
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
+        self.model = AutoModelForTokenClassification.from_pretrained(
+            model_name,
+            token=hf_token,
+        )
         self.pipeline = pipeline(
             "ner",
             model=self.model,
